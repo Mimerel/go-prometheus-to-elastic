@@ -1,0 +1,1 @@
+package go_prometheus_to_elastic

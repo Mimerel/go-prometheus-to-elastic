@@ -1,2 +1,6 @@
-elasticSearchUrl: http://192.168.222.240:9200
-port: 9999
+elasticSearch:
+  url: http://192.168.222.240:9200
+prometheus:
+  url: http://192.168.222.51:9090/federate?match[]={job=~%22prom.*%22}
+host: go-log-to-elastic
+scrape_interval: 20

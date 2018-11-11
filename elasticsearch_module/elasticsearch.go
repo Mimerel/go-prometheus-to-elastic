@@ -12,7 +12,7 @@ import (
 )
 
 func SendMetrics(all *models.Global) (err error) {
-	logs.Info("", all.Config.Host, fmt.Sprintf("create post request body \n"))
+	logs.Info(all.Config.Elasticsearch.Url, all.Config.Host, fmt.Sprintf("create post request body \n"))
 
 	body, _ := createBody(all)
 	timeout := time.Duration(30 * time.Second)
@@ -20,20 +20,20 @@ func SendMetrics(all *models.Global) (err error) {
 		Timeout: timeout,
 	}
 	postingUrl := all.Config.Elasticsearch.Url + "/_bulk"
-	logs.Info("", all.Config.Host, fmt.Sprintf("Starting to post body \n"))
+	logs.Info(all.Config.Elasticsearch.Url, all.Config.Host, fmt.Sprintf("Starting to post body \n"))
 
 	resp, err := client.Post(postingUrl, "application/json" , bytes.NewBuffer([]byte(body)))
 	if err != nil {
-		logs.Error("", all.Config.Host, fmt.Sprintf("Failed to post request to elasticSearch %s \n", err))
+		logs.Error(all.Config.Elasticsearch.Url, all.Config.Host, fmt.Sprintf("Failed to post request to elasticSearch %s \n", err))
 	}
 	temp, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logs.Error("", all.Config.Host, fmt.Sprintf("Failed to read response from elasticSearch %s \n", err))
+		logs.Error(all.Config.Elasticsearch.Url, all.Config.Host, fmt.Sprintf("Failed to read response from elasticSearch %s \n", err))
 	}
-	logs.Info("", all.Config.Host, fmt.Sprintf("response Body : %s \n", temp))
+	logs.Info(all.Config.Elasticsearch.Url, all.Config.Host, fmt.Sprintf("response Body : %s \n", temp))
 
 	resp.Body.Close()
-	logs.Info("", all.Config.Host, fmt.Sprintf("Metrics successfully sent to Elasticsearch \n"))
+	logs.Info(all.Config.Elasticsearch.Url, all.Config.Host, fmt.Sprintf("Metrics successfully sent to Elasticsearch \n"))
 
 	return nil
 }

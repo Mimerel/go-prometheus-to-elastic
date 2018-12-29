@@ -5,7 +5,7 @@ import "time"
 type Configuration struct {
 	Elasticsearch Elasticsearch `yaml:"elasticSearch,omitempty"`
 	Prometheus Prometheus `yaml:"prometheus,omitempty"`
-	Host string `yaml:"go-log-to-elastic,omitempty"`
+	Host string `yaml:"host,omitempty"`
 	Scrape_Interval time.Duration `yaml:"scrape_interval"`
 }
 

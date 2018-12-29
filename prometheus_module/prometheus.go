@@ -28,7 +28,10 @@ func ReadPrometheusData(all *models.Global) (err error) {
 	return nil
 }
 
-
+/**
+Converts the line text array to structured data
+and enriches the data
+ */
 func StructureData(all *models.Global) (err error) {
 	for _, value := range all.Records {
 		record := new(models.StructuredData)
@@ -58,7 +61,11 @@ func StructureData(all *models.Global) (err error) {
 	return nil
 }
 
-
+/**
+Requests data from Prometheus
+The data arrives as text
+The text received is then converted into a structure for future use
+ */
 func GetData(all *models.Global) (err error) {
 	logs.Info(all.Config.Elasticsearch.Url, all.Config.Host, fmt.Sprintf("Starting GetData method"))
 
@@ -100,13 +107,10 @@ func GetData(all *models.Global) (err error) {
 	return nil
 }
 
-//func CleanRecords(all *models.Global) {
-//	for key , value := range all.Records {
-//		all.Records[key].Metric = strings.TrimRight(value.Metric, "_01")
-//	}
-//}
-
-
+/**
+Reads all text lines received by prometheus
+and adds each line to an array of strings
+ */
 func LinesFromReader(r io.Reader) ([]string, error) {
 	var lines []string
 	scanner := bufio.NewScanner(r)

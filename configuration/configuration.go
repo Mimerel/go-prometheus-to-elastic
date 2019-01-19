@@ -10,7 +10,7 @@ import (
 )
 
 func ReadConfiguration() (models.Configuration) {
-	pathToFile := os.Getenv("LOGGER_CLIENT_CONFIGURATION_FILE")
+	pathToFile := os.Getenv("GO_PROMETHEUS_TO-ELASTIC_CONFIGURATION_FILE")
 	if pathToFile == "" {
 		pathToFile = "/home/pi/go/src/go-prometheus-to-elastic/configuration.yaml"
 	}

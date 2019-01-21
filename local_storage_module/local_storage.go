@@ -17,13 +17,13 @@ func WriteLastValues (all *models.Global) (error) {
 
 	yamlFile, err := yaml.Marshal(all.StructuredData)
 	if err != nil {
-		logs.Error(all.Config.Elasticsearch.Url, all.Config.Host, fmt.Sprintf("Unable to yaml marshal local_storage file %+v", err))
+		logs.Error(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Unable to yaml marshal local_storage file %+v", err))
 	}
 	err = ioutil.WriteFile(pathToFile, yamlFile, 0777)
 	if err != nil {
 		logs.Error("", "", fmt.Sprintf("Unable to write local storage file %+v", err))
 	} else {
-		logs.Info(all.Config.Elasticsearch.Url, all.Config.Host, "Values stored in local storage\n")
+		logs.Info(all.Config.ElasticsearchLogs.Url, all.Config.Host, "Values stored in local storage\n")
 	}
 	return nil
 }

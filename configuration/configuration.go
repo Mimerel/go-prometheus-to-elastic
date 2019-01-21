@@ -26,7 +26,7 @@ func ReadConfiguration() (models.Configuration) {
 	if err != nil {
 		logs.Error("", config.Host, fmt.Sprintf("Unable to yaml unmarshal configuration file %+v", err))
 	} else {
-		logs.Info(config.Elasticsearch.Url, config.Host, fmt.Sprint("Configuration Loaded : %+v \n", config))
+		logs.Info(config.ElasticsearchLogs.Url, config.Host, fmt.Sprint("Configuration Loaded : %+v \n", config))
 	}
 	return config
 }

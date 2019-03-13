@@ -2,8 +2,6 @@ package prometheus_module
 
 import (
 	"bufio"
-	"fmt"
-	"github.com/Mimerel/go-logger-client"
 	"go-prometheus-to-elastic/models"
 	"io"
 	"net/http"
@@ -15,16 +13,16 @@ import (
 func ReadPrometheusData(all *models.Global) (err error) {
 	err = GetData(all)
 	if err != nil {
-		logs.Error(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Unable to read configuration file %+v", err))
+		all.Config.Logger.Error("Unable to read configuration file %+v", err)
 		return err
 	}
 	// CleanRecords(all)
 	err = StructureData(all)
 	if err != nil {
-		logs.Error(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Unable to prepare data to send to ElasticSearch %+v", err))
+		all.Config.Logger.Error("Unable to prepare data to send to ElasticSearch %+v", err)
 		return err
 	}
-	logs.Info(all.Config.ElasticsearchLogs.Url,  all.Config.Host, fmt.Sprintf("Data ready to be sent to ElasticSearch"))
+	all.Config.Logger.Info("Data ready to be sent to ElasticSearch")
 	return nil
 }
 
@@ -46,14 +44,14 @@ func StructureData(all *models.Global) (err error) {
 
 		moment, err := strconv.ParseInt(value.Timestamp, 10, 64)
 		if err != nil {
-			logs.Error(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Unable to convert timestamp to int %+v", err))
+			all.Config.Logger.Error("Unable to convert timestamp to int %+v", err)
 			return err
 		}
 		record.Timestamp = value.Timestamp
 		record.Timestamp2 = time.Unix(moment/1000, 0).Format(time.RFC3339)
 		record.Value = value.Value
 		if err != nil {
-			logs.Error(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Unable to convert value to float %+v", err))
+			all.Config.Logger.Error("Unable to convert value to float %+v", err)
 			return err
 		}
 		all.StructuredData = append(all.StructuredData, *record)
@@ -67,7 +65,7 @@ The data arrives as text
 The text received is then converted into a structure for future use
  */
 func GetData(all *models.Global) (err error) {
-	logs.Info(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Starting GetData method"))
+	all.Config.Logger.Info("Starting GetData method")
 
 	timeout := time.Duration(30 * time.Second)
 	client := http.Client{
@@ -75,20 +73,20 @@ func GetData(all *models.Global) (err error) {
 	}
 	resp, err := client.Get(all.Config.Prometheus.Url)
 	if err != nil {
-		logs.Error(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Unable to get prometheus metrics %+v", err))
+		all.Config.Logger.Error("Unable to get prometheus metrics %+v", err)
 	}
 	defer resp.Body.Close()
-	logs.Info(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Get data request executed"))
+	all.Config.Logger.Info("Get data request executed")
 
 	if resp.StatusCode == http.StatusOK {
 
 		bodyLines, err := LinesFromReader(resp.Body)
 		if err != nil {
-			logs.Error(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Unable to read body %+v", err))
+			all.Config.Logger.Error("Unable to read body %+v", err)
 			return err
 		}
 
-		logs.Info(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Starting to read body"))
+		all.Config.Logger.Info("Starting to read body")
 
 		for _, line := range bodyLines {
 			record := new(models.BodyStruc)

@@ -1,8 +1,6 @@
 package local_storage_module
 
 import (
-	"fmt"
-	"github.com/Mimerel/go-logger-client"
 	"go-prometheus-to-elastic/models"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -17,13 +15,13 @@ func WriteLastValues (all *models.Global) (error) {
 
 	yamlFile, err := yaml.Marshal(all.StructuredData)
 	if err != nil {
-		logs.Error(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Unable to yaml marshal local_storage file %+v", err))
+		all.Config.Logger.Error("Unable to yaml marshal local_storage file %+v", err)
 	}
 	err = ioutil.WriteFile(pathToFile, yamlFile, 0777)
 	if err != nil {
-		logs.Error("", "", fmt.Sprintf("Unable to write local storage file %+v", err))
+		all.Config.Logger.Error("Unable to write local storage file %+v", err)
 	} else {
-		logs.Info(all.Config.ElasticsearchLogs.Url, all.Config.Host, "Values stored in local storage\n")
+		all.Config.Logger.Info("Values stored in local storage\n")
 	}
 	return nil
 }

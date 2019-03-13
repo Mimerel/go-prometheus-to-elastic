@@ -2,8 +2,6 @@ package elasticsearch_module
 
 import (
 	"bytes"
-	"fmt"
-	"github.com/Mimerel/go-logger-client"
 	"go-prometheus-to-elastic/models"
 	"io/ioutil"
 	"net/http"
@@ -12,7 +10,7 @@ import (
 )
 
 func SendMetrics(all *models.Global) (err error) {
-	logs.Info(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("create post request body"))
+	all.Config.Logger.Info("create post request body")
 
 	body, _ := createBody(all)
 	timeout := time.Duration(30 * time.Second)
@@ -20,22 +18,22 @@ func SendMetrics(all *models.Global) (err error) {
 		Timeout: timeout,
 	}
 	postingUrl := all.Config.Elasticsearch.Url + "/_bulk"
-	logs.Info(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Starting to post body"))
+	all.Config.Logger.Info("Starting to post body")
 
 	resp, err := client.Post(postingUrl, "application/json" , bytes.NewBuffer([]byte(body)))
 	if err != nil {
-		logs.Error(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Failed to post request to elasticSearch %s", err))
+		all.Config.Logger.Error("Failed to post request to elasticSearch %s", err)
 		return err
 	}
 	temp, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logs.Error(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Failed to read response from elasticSearch %s", err))
+		all.Config.Logger.Error("Failed to read response from elasticSearch %s", err)
 		return err
 	}
-	logs.Info(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("response Body : %s ", temp))
+	all.Config.Logger.Info("response Body : %s ", temp)
 
 	resp.Body.Close()
-	logs.Info(all.Config.ElasticsearchLogs.Url, all.Config.Host, fmt.Sprintf("Metrics successfully sent to Elasticsearch"))
+	all.Config.Logger.Info("Metrics successfully sent to Elasticsearch")
 
 	return nil
 }

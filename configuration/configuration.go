@@ -17,16 +17,17 @@ func ReadConfiguration() (models.Configuration) {
 	yamlFile, err := ioutil.ReadFile(pathToFile)
 
 	if err != nil {
-		logs.Error("", "", fmt.Sprintf("Unable to read configuration file %+v", err))
+		fmt.Printf("Unable to read configuration file %+v", err)
 	}
 
 	var config models.Configuration
 
 	err = yaml.Unmarshal(yamlFile, &config)
 	if err != nil {
-		logs.Error("", config.Host, fmt.Sprintf("Unable to yaml unmarshal configuration file %+v", err))
+		fmt.Printf("Unable to yaml unmarshal configuration file %+v", err)
 	} else {
-		logs.Info(config.ElasticsearchLogs.Url, config.Host, fmt.Sprint("Configuration Loaded : %+v \n", config))
+		config.Logger = logs.New(config.Elasticsearch.Url, config.Host)
+		config.Logger.Info("Configuration Loaded : %+v \n", config)
 	}
 	return config
 }
